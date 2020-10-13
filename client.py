@@ -25,9 +25,9 @@ def send_message(connection):
     while True:
         print("Enter Message: ")
         message = input()
-        if message != 'bye':
-            connection.send(message.encode())
-        else:
+        connection.send(message.encode())
+        if message == 'bye':
+            print("You are leaving the chat. Bye!")
             break
 
 if __name__ == '__main__':

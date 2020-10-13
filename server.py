@@ -26,10 +26,14 @@ def accept_clients(this_server):
 def client_message(client):
     while True:
         data = client.recv(4096).decode()
-        if not data or data.lower() == 'bye':
+        if not data:
             break
+        print(data)
         sender_name = get_name_given_connection(client)
-        message = (sender_name + ": " + data).encode()
+        if data.lower() == 'bye':
+            message = (sender_name + "left the chat").encode()
+        else:
+            message = (sender_name + ": " + data).encode()
         send_everyone_message(message, client)
 
     clean_up_conn(client)
