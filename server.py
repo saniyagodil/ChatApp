@@ -1,5 +1,6 @@
 import socket
 import threading
+from user import User
 
 # Global constants
 HOST = 'localhost'
@@ -10,7 +11,6 @@ BUFFER_SIZE = 4096
 QUIT_MESSAGE = 'bye'
 
 # Global variables
-list_of_clients = []
 users = []
 
 def server_program():
@@ -21,7 +21,7 @@ def server_program():
     """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    print('starting up on %s port %s' % server_address)
+    print(f'Starting up on {SERVER_ADDRESS}')
     server.bind(SERVER_ADDRESS)
     server.listen(MAX_CONNECTIONS)
     threading.Thread(target = accept_clients, args = (server, )).start()
@@ -35,17 +35,14 @@ def accept_clients(this_server):
     """
     while True:
         client, client_address = this_server.accept()
-        print('Got connection from', client_address)
+        print(f'Got connection from {client_address}')
         client_name = client.recv(BUFFER_SIZE).decode()
-
         new_user = User(client, client_address, client_name)
         users.append(new_user)
+        client.send((f'Welcome {client_name}').encode())
+        threading.Thread(target = recieve_client_messages, args = (new_user, )).start()
 
-        client.send((f"Welcome {client_name}").encode())
-        list_of_clients.append((client_name, client))
-        threading.Thread(target = recieve_client_messages, args = (user, )).start()
-
-    print("Server Crashed")
+    print('Server Crashed')
 
 def recieve_client_messages(user):
     """
@@ -60,10 +57,10 @@ def recieve_client_messages(user):
         print(data)
         sender_name = user.name
         if data.lower() == QUIT_MESSAGE:
-            message = (sender_name + "left the chat").encode()
+            message = (f'{sender_name} left the chat').encode()
         else:
-            message = (sender_name + ": " + data).encode()
-        send_everyone_message(message, client)
+            message = (f'{sender_name}: {data}').encode()
+        send_everyone_message(message, user)
     clean_up_conn(client)
 
 
@@ -79,22 +76,28 @@ def send_everyone_message(message, user):
             try:
                 currUser.client.send(message)
             except:
+                print(f'Failed to send {currUser} message')
                 continue
 
 
-def get_client_index(connection):
-    for index, client_name, client in enumerate(list_of_clients):
-        if client == connection:
-            return index
+def clean_up_conn(user_to_remove):
+    """
+    Handles user ending connection by removing them from list of users
+    and closing their socket
+    :param user_to_remove: user
+    :return None
+    """
+    users.remove(user_to_remove)
 
-
-def clean_up_conn(connection):
-    index = get_client_index(connection)
-    print(index)
-    del list_of_clients[index]
-    connection.close()
-
-
+    # conn_index = -1
+    # for index, user in enumerate(users):
+    #     if user == user_to_remove:
+    #         conn_index = index
+    # try:
+    #     del users[conn_index]
+    # except:
+    #     print('User couldn\'t be found')
+    user_to_remove.client.close()
 
 if __name__ == '__main__':
     server_program()

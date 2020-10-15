@@ -10,11 +10,12 @@ class User():
     def set_name(self, name):
         self.name = name
 
-    def set_client(self, new_client):
-    """
-    Associates new socket with User
-    Would be used if a user can sign in again
-    :param new_client: socket
-    :return None
-    """
-        self.client = new_client
+    # def set_client(self, new_client):
+    #
+    # """
+    # Associates new socket with User
+    # Would be used if a user can sign in again
+    # :param new_client: socket
+    # :return None
+    # """
+    #     self.client = new_client

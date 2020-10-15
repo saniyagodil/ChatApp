@@ -51,7 +51,7 @@ def send_message(connection):
         message = input()
         connection.send(message.encode())
         if message == QUIT_MESSAGE:
-            print("You are leaving the chat. Bye!")
+            print('You are leaving the chat. Bye!')
             break
 
 
