@@ -36,10 +36,11 @@ def accept_clients(this_server):
     while True:
         client, client_address = this_server.accept()
         print(f'Got connection from {client_address}')
-        client_name = client.recv(BUFFER_SIZE).decode()
+        client_name = client.recv(BUFFER_SIZE).decode('utf-8')
+        print("got name", client_name)
         new_user = User(client, client_address, client_name)
         users.append(new_user)
-        client.send((f'Welcome {client_name}').encode())
+        client.send((f'Welcome {client_name}').encode('utf-8'))
         threading.Thread(target = recieve_client_messages, args = (new_user, )).start()
 
     print('Server Crashed')
@@ -51,16 +52,15 @@ def recieve_client_messages(user):
     :return None
     """
     while True:
-        data = user.client.recv(BUFFER_SIZE).decode()
-        if not data:
-            break
-        print(data)
-        sender_name = user.name
-        if data.lower() == QUIT_MESSAGE:
-            message = (f'{sender_name} left the chat').encode()
-        else:
-            message = (f'{sender_name}: {data}').encode()
-        send_everyone_message(message, user)
+        data = user.client.recv(BUFFER_SIZE).decode('utf-8')
+        try:
+            if data.lower() == QUIT_MESSAGE:
+                message = (f'{user.name} left the chat').encode('utf-8')
+            else:
+                message = (f'{user.name}: {data}').encode('utf-8')
+            send_everyone_message(message, user)
+        except:
+            print('Failed')
     clean_up_conn(client)
 
 
@@ -88,7 +88,7 @@ def clean_up_conn(user_to_remove):
     :return None
     """
     users.remove(user_to_remove)
-
+    print(users)
     # conn_index = -1
     # for index, user in enumerate(users):
     #     if user == user_to_remove:
