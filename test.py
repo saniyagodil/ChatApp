@@ -13,39 +13,40 @@ QUIT_MESSAGE = 'bye'
 client_one = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_one.connect(SERVER_ADDRESS)
 client_one.send('ChatBot'.encode('utf-8'))
-# client_two = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# client_two.connect(SERVER_ADDRESS)
+client_two = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_two.connect(SERVER_ADDRESS)
+client_two.send('User1'.encode('utf-8'))
 
-def send_test_message(message):
+def send_test_message(message, connection):
     """
     Sends test message
     :param message: str
+    :param connection: socket
     :return None
     """
-    client_one.send(message.encode('utf-8'))
-    print(message)
+    connection.send(message.encode('utf-8'))
     if message == QUIT_MESSAGE:
-        client_one.close()
+        connection.close()
 
 
-def recieve_test_message():
+def recieve_test_message(connection):
     """
     Recieve messages
-    :param None
+    :param connection: Socket
     :return None
     """
     while True:
-        try:
-            message = client_one.recv(BUFFER_SIZE).decode('utf-8')
-            send_everyone_message()
-            print(message)
-        except:
-            print("didn't recieve")
+        message = connection.recv(BUFFER_SIZE).decode('utf-8')
+        if not message:
+            break
+        print(message)
 
 
-threading.Thread(target = recieve_test_message).start()
-send_test_message("message 1")
-send_test_message("hello")
+threading.Thread(target = recieve_test_message, args = (client_one, )).start()
+threading.Thread(target = recieve_test_message, args = (client_two, )).start()
+send_test_message("message 1", client_one)
+send_test_message("hello", client_one)
+send_test_message("hello", client_two)
 # threading.Thread(target = recieve_test_message, args = (client_two, )).start()
 
 

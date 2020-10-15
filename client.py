@@ -1,4 +1,5 @@
 import socket
+import sys
 import threading
 from user import User
 
@@ -45,14 +46,14 @@ def send_message(connection):
     :param connection: socket
     :return None
     """
-
     while True:
         print('Enter Message: ')
         message = input()
         connection.send(message.encode('utf-8'))
         if message == QUIT_MESSAGE:
             print('You are leaving the chat. Bye!')
-            break
+            connection.close()
+            sys.exit(0)
 
 
 if __name__ == '__main__':
