@@ -29,7 +29,6 @@ def server_program():
 
 def accept_clients(this_server):
     """
-    Accepts new clients and create a new thread for each
     :param this_server : socket
     :return None
     """
@@ -46,7 +45,6 @@ def accept_clients(this_server):
 
 def recieve_client_messages(user):
     """
-    Recieve message from client and send other users
     :param user: user
     :return None
     """
@@ -66,7 +64,6 @@ def recieve_client_messages(user):
 
 def send_everyone_message(message, user):
     """
-    Sends message to all clients except for Sender
     :param message : str
     :param user : user
     :return: None
@@ -82,8 +79,6 @@ def send_everyone_message(message, user):
 
 def clean_up_conn(user_to_remove):
     """
-    Handles user ending connection by removing them from list of users
-    and closing their socket
     :param user_to_remove: user
     :return None
     """

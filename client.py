@@ -13,8 +13,6 @@ QUIT_MESSAGE = 'bye'
 
 def client_program():
     """
-    Sets up client socket and creates two threads
-    One for sending messages and one for recieving messages
     :param None
     :return None
     """
@@ -29,7 +27,6 @@ def client_program():
 
 def recieve_message(connection):
     """
-    Listens for messages and prints them
     :param connection: socket
     return: None
     """
@@ -42,7 +39,6 @@ def recieve_message(connection):
 
 def send_message(connection):
     """
-    Sends client messages to Server & quits chat if client enters QUIT_MESSAGE
     :param connection: socket
     :return None
     """
