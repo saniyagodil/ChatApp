@@ -43,7 +43,6 @@ def send_message(connection):
     :return None
     """
     while True:
-        print('Enter Message: ')
         message = input()
         connection.send(message.encode('utf-8'))
         if message == QUIT_MESSAGE:
